@@ -30,10 +30,10 @@ fi
 # python -m pip install --upgrade pip
 # 换源完美解决
 # 安装pip所需依赖
-pip install --upgrade setuptools 
-pip install --ignore-installed wrapt 
+pip install --upgrade setuptools
+pip install --ignore-installed wrapt
 # 安装pip最新版
-pip install -U pip 
+pip install -U pip
 # 根据 requirements.txt 里的记录安装 pip package，确保所有版本之间的兼容性
 pip install -r requirements.txt
 
