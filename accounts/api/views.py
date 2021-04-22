@@ -46,12 +46,12 @@ class AccountViewSet(viewsets.ViewSet):
         return Response({
             'success': True,
             'user': UserSerializer(user).data,
-        })
+        }, status=201)
 
     @action(methods=['POST'], detail=False)
     def login(self, request):
-        # 默认的 username 是 admin, password 也是 admin
         serializer = LoginSerializer(data=request.data)
+
         if not serializer.is_valid():
             return Response({
                 "success": False,
