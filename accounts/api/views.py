@@ -37,7 +37,7 @@ class AccountViewSet(viewsets.ViewSet):
             return Response({
                 'success': False,
                 'message': "Please check input",
-                'error': serializer.errors,
+                'errors': serializer.errors,
             }, status=400)
 
         user = serializer.save()
@@ -55,25 +55,40 @@ class AccountViewSet(viewsets.ViewSet):
         if not serializer.is_valid():
             return Response({
                 "success": False,
-                "message": "Please check input",
+                "message": "Please check input.",
                 "errors": serializer.errors,
             }, status=400)
 
-        username = serializer.validated_data['username']
+        username = serializer.validated_data['username'].lower()
         password = serializer.validated_data['password']
-        user = django_authenticate(username=username, password=password)
 
+        # check user exists
+        if not User.objects.filter(username=username):
+            return Response({
+                "success": False,
+                "message": "Please check input.",
+                "errors": {
+                    "username": ["User does not exist."]
+                }
+            }, status=400)
+
+        user = django_authenticate(username=username, password=password)
         if not user or user.is_anonymous:
             return Response({
                 "success": False,
-                "message": "username and password does not match",
+                "message": "Username and password does not match.",
             }, status=400)
 
         django_login(request, user)
 
+        user_data = {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+        }
         return Response({
             "success": True,
-            "user": UserSerializer(instance=user).data
+            "user": user_data
         })
 
     @action(methods=['GET'], detail=False)
@@ -90,3 +105,4 @@ class AccountViewSet(viewsets.ViewSet):
         # logout
         django_logout(request)
         return Response({"success": True})
+
