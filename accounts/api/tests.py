@@ -232,7 +232,7 @@ class AccountLoginApiTests(TestCase):
         )
 
     def _test_logged_in(self, data):
-        response = self.client.get('/api/accounts/login_status/')
+        response = self.client.get(LOGIN_STATUS_URL)
         self.assertEqual(response.data['has_logged_in'], False)
         response = self.client.post(LOGIN_URL, data)
         self.assertEqual(response.status_code, 200)
@@ -242,7 +242,7 @@ class AccountLoginApiTests(TestCase):
             'username': self.linghu.username,
             'email': self.linghu.email,
         })
-        response = self.client.get('/api/accounts/login_status/')
+        response = self.client.get(LOGIN_STATUS_URL)
         self.assertEqual(response.data['has_logged_in'], True)
 
     def test_success_logged_in(self):
