@@ -2,7 +2,6 @@ from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny
 from django.contrib.auth import (
     authenticate as django_authenticate,
     login as django_login,
@@ -24,8 +23,12 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class AccountViewSet(viewsets.ViewSet):
+    """
+    API endpoint that allows users to sign up, login, logout and check login status.
+    """
+
     serializer_class = SignupSerializer
-    permissions_classes = (AllowAny,)
+    permissions_classes = (permissions.AllowAny,)
 
     @action(methods=['POST'], detail=False)
     def signup(self, request):
@@ -105,4 +108,3 @@ class AccountViewSet(viewsets.ViewSet):
         # logout
         django_logout(request)
         return Response({"success": True})
-

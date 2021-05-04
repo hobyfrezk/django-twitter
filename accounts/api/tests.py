@@ -1,5 +1,5 @@
-from django.test import TestCase
 from rest_framework.test import APIClient
+from testing.testcases import TestCase
 from django.contrib.auth.models import User
 
 LOGIN_URL = '/api/accounts/login/'
@@ -7,11 +7,8 @@ LOGOUT_URL = '/api/accounts/logout/'
 SIGNUP_URL = '/api/accounts/signup/'
 LOGIN_STATUS_URL = '/api/accounts/login_status/'
 
-class AccountApiTests(TestCase):
 
-    @staticmethod
-    def createUser(username, email, password):
-        return User.objects.create_user(username, email, password)
+class AccountApiTests(TestCase):
 
     def _test_logged_in(self, expect_status):
         response = self.client.get(LOGIN_STATUS_URL)
@@ -26,7 +23,7 @@ class AccountApiTests(TestCase):
             'email': 'admin@test.com',
             'password': 'admin_test_pwd'
         }
-        self.user = self.createUser(
+        self.user = self.create_user(
             username=self.test_data['username'],
             email=self.test_data['email'],
             password=self.test_data['password'],
@@ -152,29 +149,27 @@ class AccountApiTests(TestCase):
         self.assertEqual('password' in response.data['errors'], True)
 
     def test_username_occupied(self):
-        self.createUser(
-            username='linghu',
-            email='linghu@jiuzhang.com',
-            password='any password',
-        )
+        self.create_user(username='linghu', email='linghu@jiuzhang.com')
 
         response = self.client.post(SIGNUP_URL, {
             'username': 'Linghu',
             'email': 'linghuchong@ninechpater.com',
             'password': 'any password',
         })
+
         self.assertEqual(response.status_code, 400)
-        # print(response.data)
         self.assertEqual('username' in response.data['errors'], True)
         self.assertEqual('email' in response.data['errors'], False)
 
     def test_email_occupied(self):
-        User.objects.create_user(username='linghu', email='linghu@jiuzhang.com')
+        self.create_user(username='linghu', email='linghu@jiuzhang.com')
+
         response = self.client.post(SIGNUP_URL, {
             'username': 'linghuchong',
             'email': 'Linghu@Jiuzhang.com',
             'password': 'any password',
         })
+
         self.assertEqual(response.status_code, 400)
         self.assertEqual('username' in response.data['errors'], False)
         self.assertEqual('email' in response.data['errors'], True)
@@ -218,30 +213,29 @@ class AccountApiTests(TestCase):
         self.assertEqual(response.data['message'], 'Please check input.')
         self.assertEqual(response.data['errors']['username'][0].__str__(), 'User does not exist.')
 
+
 class AccountLoginApiTests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.linghu = self.create_user('linghu')
+        self.linghu = {
+            'username': 'linghu',
+            'email': 'linghu@lintcode.com',
+            'password': 'linghu1234'
 
-    def create_user(self, username):
-        return User.objects.create_user(
-            username=username,
-            email=f'{username}@lintcode.com',
-            password=f'{username}1234',
-        )
+        }
+        self.create_user(self.linghu['username'], self.linghu['email'], self.linghu['password'])
 
     def _test_logged_in(self, data):
         response = self.client.get(LOGIN_STATUS_URL)
         self.assertEqual(response.data['has_logged_in'], False)
+
         response = self.client.post(LOGIN_URL, data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['success'], True)
-        self.assertDictEqual(response.data['user'], {
-            'id': self.linghu.id,
-            'username': self.linghu.username,
-            'email': self.linghu.email,
-        })
+        self.assertEqual(response.data['user']['username'], self.linghu['username'])
+        self.assertEqual(response.data['user']['email'], self.linghu['email'])
+
         response = self.client.get(LOGIN_STATUS_URL)
         self.assertEqual(response.data['has_logged_in'], True)
 
