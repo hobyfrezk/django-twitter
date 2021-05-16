@@ -17,14 +17,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
-from accounts.api import views
+
+from accounts.api import views as account_views
+from tweets.api import views as tweets_views
+from friendships.api import views as friendships_views
 
 router = routers.DefaultRouter()
-router.register(r'api/users', views.UserViewSet)
-router.register(r'api/accounts', views.AccountViewSet, basename='accounts')
+router.register(r'api/users', account_views.UserViewSet)
+router.register(r'api/accounts', account_views.AccountViewSet, basename='accounts')
+router.register(r'api/tweets', tweets_views.TweetViewSet, basename='tweets')
+router.register(r'api/friendships', friendships_views.FriendshipViewSet, basename='friendships')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', include(router.urls)),
+    path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]

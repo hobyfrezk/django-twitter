@@ -29,8 +29,8 @@ ALLOWED_HOSTS = ['127.0.0.1', '192.168.33.10', 'localhost']
 
 
 # Application definition
-
 INSTALLED_APPS = [
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'rest_framework',
 
     # project apps
-    'accounts'
+    'accounts',
+    'tweets',
+    'friendships',
 ]
 
 REST_FRAMEWORK = {
