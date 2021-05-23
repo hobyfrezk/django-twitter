@@ -7,6 +7,7 @@ class TweetAdmin(admin.ModelAdmin):
     # date_hierarchy = 'created_at'
     list_display = (
         'winnipeg_time',
+        'created_at',
         'user',
         'content',
         'hours_to_now',

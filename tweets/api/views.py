@@ -30,6 +30,7 @@ class TweetViewSet(viewsets.GenericViewSet,
                 'message': 'Please check input',
                 'errors': serializer.errors,
             }, status = 400)
+
         tweet = serializer.save()
 
         # TODO dont get it
@@ -45,6 +46,7 @@ class TweetViewSet(viewsets.GenericViewSet,
         tweets = Tweet.objects.filter(
             user_id=request.query_params['user_id']
         ).order_by('-created_at')
+
         serializer = TweetSerializer(tweets, many=True)
 
         return Response({

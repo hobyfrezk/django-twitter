@@ -14,9 +14,10 @@ class Tweet(models.Model):
         ordering = ('user', '-created_at')
 
     @property
+    # TODO: debug hours_to_now function
     def hours_to_now(self):
         return (utc_now() - self.created_at).seconds // 3600
 
     @property
     def winnipeg_time(self):
-        return manitoba_time_now()
+        return manitoba_time_now(self.created_at)

@@ -3,6 +3,9 @@ from django.db import models
 
 
 class Friendship(models.Model):
+    # define friendship relationships,
+    # from_user  --follow--> to_user
+    #   ^ fans
     from_user = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -21,9 +24,13 @@ class Friendship(models.Model):
 
     class Meta:
         index_together = (
+            # Use case: list users you subscribed
             ('from_user_id', 'created_at'),
+            # Use case: list your fans
             ('to_user_id', 'created_at'),
         )
+
+        # add unique constraint
         unique_together = (('from_user_id', 'to_user_id'),)
 
     def __str__(self):
