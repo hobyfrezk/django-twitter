@@ -12,7 +12,6 @@ def validate_requested_user_exist(func):
                 {
                     'success': False,
                     'message': 'Requested user does not exist',
-                    'followers': [],
                 }, status=400,
             )
         return func(*args, **kwargs)

@@ -89,6 +89,12 @@ class FriendshipApiTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['duplicate'], True)
 
+
+    def test_unfollow(self):
+        # TODO: test unfollow feature
+        pass
+
+
     def test_get_follower(self):
         get_followers_user1_url = self.get_followers_url(pk=self.user1.id)
         get_followers_user2_url = self.get_followers_url(pk=self.user2.id)
