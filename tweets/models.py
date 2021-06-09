@@ -21,3 +21,6 @@ class Tweet(models.Model):
     @property
     def winnipeg_time(self):
         return manitoba_time_now(self.created_at)
+
+    def __str__(self):
+        return f'"{self.content}"'
