@@ -1,8 +1,10 @@
-from tweets.models import Tweet
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
-from tweets.api.serializers import TweetSerializer, TweetCreateSerializer
+
 from newsfeeds.services import NewsFeedService
+from tweets.api.serializers import TweetSerializer, TweetCreateSerializer
+from tweets.models import Tweet
+
 
 class TweetViewSet(viewsets.GenericViewSet,
                    viewsets.mixins.CreateModelMixin,

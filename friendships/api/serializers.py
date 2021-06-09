@@ -2,7 +2,7 @@ from rest_framework import serializers, exceptions
 from friendships.models import Friendship
 from accounts.api.serializers import UserSerializer
 
-class FriendshipSerializerForCreateDelete(serializers.ModelSerializer):
+class FriendshipSerializerForCreate(serializers.ModelSerializer):
     from_user_id = serializers.IntegerField()
     to_user_id = serializers.IntegerField()
 
@@ -23,20 +23,9 @@ class FriendshipSerializerForCreateDelete(serializers.ModelSerializer):
             to_user_id=validated_data['to_user_id'],
         )
 
-    def delete(self):
-        validated_data = [
-            {**attrs, **kwargs} for attrs in self.validated_data
-        ]
-
-        deleted, _ = Friendship.objects.filter(
-            from_user_id = validated_data['from_user_id'],
-            to_user_id = validated_data['to_user_id'],
-        ).delete()
-
-
 class FollowerSerializer(serializers.ModelSerializer):
     user = UserSerializer(source='from_user')
-    created_at = serializers.DateTimeField()
+    # created_at = serializers.DateTimeField()
 
     class Meta:
         model = Friendship

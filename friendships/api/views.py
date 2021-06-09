@@ -3,12 +3,13 @@ from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from friendships.api.serializers import FollowerSerializer, FollowingSerializer, FriendshipSerializerForCreateDelete
+from friendships.api.serializers import FollowerSerializer, FollowingSerializer, FriendshipSerializerForCreate
 from friendships.models import Friendship
 from friendships.api.decorators import validate_requested_user_exist
 
 class FriendshipViewSet(viewsets.GenericViewSet):
     queryset = User.objects.all()
+    serializer_class = FriendshipSerializerForCreate
 
     @action(methods=['GET'], detail=True, permission_classes=[permissions.AllowAny])
     @validate_requested_user_exist
@@ -43,7 +44,7 @@ class FriendshipViewSet(viewsets.GenericViewSet):
                 'duplicate': True,
             }, status=200)
 
-        serializer = FriendshipSerializerForCreateDelete(data={
+        serializer = FriendshipSerializerForCreate(data={
             'from_user_id': request.user.id,
             'to_user_id': pk,
         })
@@ -58,20 +59,19 @@ class FriendshipViewSet(viewsets.GenericViewSet):
         return Response({'success': True}, status=201)
 
     @action(methods=['POST'], detail=True, permission_classes=[permissions.IsAuthenticated])
+    @validate_requested_user_exist
     def unfollow(self, request, pk):
-        pk = int(pk)
-        if Friendship.objects.filter(from_user=pk, to_user=request.user).exists():
+        if not Friendship.objects.filter(from_user=request.user, to_user=pk).exists():
             return Response({
                 'success': True,
                 'duplicate': True,
-            })
+            }, status=200)
 
-        serializer = FriendshipSerializerForCreateDelete(data={
-            'from_user_id': request.user.id,
-            'to_user_id': pk,
-        })
+        deleted, _ = Friendship.objects.filter(
+            from_user_id=request.user,
+            to_user_id=pk,
+        ).delete()
 
-        serializer.delete()
         return Response({'success': True, 'deleted': deleted})
 
 

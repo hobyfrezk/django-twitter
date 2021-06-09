@@ -22,6 +22,7 @@ from accounts.api import views as account_views
 from tweets.api import views as tweets_views
 from friendships.api import views as friendships_views
 from newsfeeds.api import  views as newsfeeds_views
+from comments.api import views as comments_views
 
 router = routers.DefaultRouter()
 router.register(r'api/users', account_views.UserViewSet)
@@ -29,6 +30,7 @@ router.register(r'api/accounts', account_views.AccountViewSet, basename='account
 router.register(r'api/tweets', tweets_views.TweetViewSet, basename='tweets')
 router.register(r'api/friendships', friendships_views.FriendshipViewSet, basename='friendships')
 router.register(r'api/newsfeeds', newsfeeds_views.NewsFeedViewSet, basename='newsfeeds')
+router.register(r'api/comments', comments_views.CommentViewSet, basename='comments')
 
 urlpatterns = [
     path('', include(router.urls)),

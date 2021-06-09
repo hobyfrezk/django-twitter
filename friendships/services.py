@@ -13,6 +13,7 @@ class FriendshipService:
 
         # 2nd method
         friendships = Friendship.objects.filter(to_user=user)
+        # we use .from_user_id not from_user, we will not trigger N+1 problem because ID is stored in the table.
         follower_ids = [friendship.from_user_id for friendship in friendships]
 
         return User.objects.filter(id__in=follower_ids)
