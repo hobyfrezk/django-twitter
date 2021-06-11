@@ -36,7 +36,7 @@ class CommentViewSet(viewsets.GenericViewSet,
         # ).order_by('-created_at')
 
         queryset = self.get_queryset()
-        comments = self.filter_queryset(queryset).prefetch_related('user_id')
+        comments = self.filter_queryset(queryset).prefetch_related('user')
 
         serializer = CommentSerializer(comments, many=True)
 

@@ -11,6 +11,7 @@ class Comment(models.Model):
 
     class Meta:
         index_together = (('tweet', 'created_at'), )
+        ordering = ['created_at']
 
     def __str__(self):
         return f"Comment: {self.content} by user {self.user}"
