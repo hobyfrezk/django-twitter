@@ -13,8 +13,9 @@ class CommentViewSet(viewsets.GenericViewSet,
                      viewsets.mixins.UpdateModelMixin,
                      viewsets.mixins.DestroyModelMixin):
 
-    queryset = Comment.objects.all()
     serializer_class = CommentSerializerForCreate
+    queryset = Comment.objects.all()
+    filterset_fields = ('tweet_id', )
 
     def get_permissions(self):
 
@@ -30,9 +31,12 @@ class CommentViewSet(viewsets.GenericViewSet,
         if 'tweet_id' not in request.query_params:
             return Response('missing tweet id', status=400)
 
-        comments = Comment.objects.filter(
-            tweet_id=request.query_params['tweet_id']
-        ).order_by('-created_at')
+        # comments = Comment.objects.filter(
+        #     tweet_id=request.query_params['tweet_id']
+        # ).order_by('-created_at')
+
+        queryset = self.get_queryset()
+        comments = self.filter_queryset(queryset).prefetch_related('user_id')
 
         serializer = CommentSerializer(comments, many=True)
 
@@ -86,5 +90,5 @@ class CommentViewSet(viewsets.GenericViewSet,
 
         return Response({
             "success": True,
-        }, status=201)
+        }, status=200)
 
