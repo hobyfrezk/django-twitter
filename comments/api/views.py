@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from comments.api.permissions import IsObjectOwner
 from comments.api.serializers import CommentSerializer, CommentSerializerForCreate, CommentSerializerForUpdate
 from comments.models import Comment
-
+from utils.decorators import required_params
 
 class CommentViewSet(viewsets.GenericViewSet,
                      viewsets.mixins.ListModelMixin,
@@ -27,13 +27,8 @@ class CommentViewSet(viewsets.GenericViewSet,
 
         return [AllowAny()]
 
+    @required_params(params=['tweet_id'])
     def list(self, request, *args, **kwargs):
-        if 'tweet_id' not in request.query_params:
-            return Response('missing tweet id', status=400)
-
-        # comments = Comment.objects.filter(
-        #     tweet_id=request.query_params['tweet_id']
-        # ).order_by('-created_at')
 
         queryset = self.get_queryset()
         comments = self.filter_queryset(queryset).prefetch_related('user')
@@ -47,8 +42,8 @@ class CommentViewSet(viewsets.GenericViewSet,
     def create(self, request, *args, **kwargs):
         data = {
             "user_id": request.user.id,
-            "tweet_id": request.data['tweet_id'],
-            "content": request.data['content'],
+            "tweet_id": request.data.get('tweet_id'),
+            "content": request.data.get('content'),
         }
 
         serializer = CommentSerializerForCreate(data=data)
@@ -56,13 +51,13 @@ class CommentViewSet(viewsets.GenericViewSet,
         if not serializer.is_valid():
             return Response({
                 'message': 'Please check input',
-                'error': serializer.errors,
+                'errors': serializer.errors,
             }, status=400)
 
         comment = serializer.save()
         return Response(
             CommentSerializer(comment).data,
-            status=200
+            status=201
         )
 
     def update(self, request, *args, **kwargs):
@@ -81,7 +76,7 @@ class CommentViewSet(viewsets.GenericViewSet,
         return Response({
             'success': True,
             'comment': CommentSerializer(comment).data,
-        }, status=201)
+        }, status=200)
 
     def destroy(self, request, *args, **kwargs):
 
