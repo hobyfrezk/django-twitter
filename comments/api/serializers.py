@@ -14,7 +14,6 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializerForCreate(serializers.ModelSerializer):
-    content = serializers.CharField(min_length=6, max_length=140)
     tweet_id = serializers.IntegerField()
     user_id = serializers.IntegerField()
 
@@ -39,8 +38,6 @@ class CommentSerializerForCreate(serializers.ModelSerializer):
 
 
 class CommentSerializerForUpdate(serializers.ModelSerializer):
-    content = serializers.CharField(min_length=6, max_length=140)
-
     class Meta:
         model = Comment
         fields = ('content', )
